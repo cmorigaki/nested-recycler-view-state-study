@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NestedRecyclerViewState</string>
+    <string name="banner_text">Banner %1$s</string>
+    <string name="open_fragment">Open fragment</string>
+    <string name="other_fragment">Other fragment</string>
+    <string name="back_pressed_message">Back button pressed</string>
+</resources>
