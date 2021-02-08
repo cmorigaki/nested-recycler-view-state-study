@@ -5,17 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import br.com.nestedrecyclerviewstate.databinding.BannerBinding
 import br.com.nestedrecyclerviewstate.databinding.CarouselBinding
+import br.com.nestedrecyclerviewstate.staterestoration.NestedRecyclerViewStateRecoverAdapter
+import br.com.nestedrecyclerviewstate.staterestoration.NestedRecyclerViewViewHolder
 
 private enum class ViewType {
     BANNER,
     CAROUSEL,
 }
 
-class ContentAdapter : ListAdapter<Content, ContentAdapter.ViewHolder>(ContentAdapterDiffUtil()) {
+class ContentAdapter : NestedRecyclerViewStateRecoverAdapter<Content, ContentAdapter.ViewHolder>(ContentAdapterDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
             ViewType.BANNER.ordinal ->
@@ -55,6 +56,7 @@ class ContentAdapter : ListAdapter<Content, ContentAdapter.ViewHolder>(ContentAd
             )
             else -> throw ClassNotFoundException()
         }
+        super.onBindViewHolder(holder, position)
     }
 
     sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -72,7 +74,7 @@ class ContentAdapter : ListAdapter<Content, ContentAdapter.ViewHolder>(ContentAd
 
         class CarouselViewHolder(
             private val binding: CarouselBinding,
-        ) : ViewHolder(binding.root) {
+        ) : ViewHolder(binding.root), NestedRecyclerViewViewHolder {
 
             private lateinit var content: Content.Carousel
 
@@ -89,6 +91,10 @@ class ContentAdapter : ListAdapter<Content, ContentAdapter.ViewHolder>(ContentAd
                     (carousel.adapter as CarouselAdapter).submitList(content.list)
                 }
             }
+
+            override fun getId() = content.id
+
+            override fun getLayoutManager() = binding.carousel.layoutManager
         }
     }
 
